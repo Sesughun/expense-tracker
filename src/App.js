@@ -6,9 +6,7 @@ import ExpenseContext from "./ExpenseContext";
 
 function App() {
   const [category, setCategory] = useState(["Groceries", "Vehicle"]);
-  const categoryEl = useRef();
-  const [table, setTable] = useState();
-  /*const table_data = [
+  const table_data = [
     {
       description: "Item 1",
       amount: 100,
@@ -19,7 +17,9 @@ function App() {
       amount: 200,
       category: category[1],
     },
-  ];*/
+  ];
+  const categoryEl = useRef();
+  const [table, setTable] = useState(table_data);
 
   function handleAddCategory() {
     setCategory((prevCategories) => [
