@@ -33,6 +33,7 @@ function App() {
   function handleSubmit() {
     //setTable()
   }
+  function handleDelete() {}
 
   return (
     <div className="container">
@@ -99,22 +100,18 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Item 1</td>
-                <td>100</td>
-                <td>Category 1</td>
-                <td>
-                  <button className="btn btn-danger">Delete</button>
-                </td>
-              </tr>
-              <tr>
-                <td>Item 2</td>
-                <td>200</td>
-                <td>Category 2</td>
-                <td>
-                  <button className="btn btn-danger">Delete</button>
-                </td>
-              </tr>
+              {table.map((item, index) => (
+                <tr key={index}>
+                  <td>{item.description}</td>
+                  <td>{item.amount}</td>
+                  <td>{item.category}</td>
+                  <td>
+                    <button className="btn btn-danger" onClick={handleDelete}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
