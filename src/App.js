@@ -158,7 +158,7 @@ function App() {
                   <td>
                     <button
                       className="btn btn-danger"
-                      onClick={() => handleDelete(item.id)}
+                      onDoubleClick={() => handleDelete(item.id)}
                     >
                       Delete
                     </button>
