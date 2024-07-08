@@ -12,7 +12,8 @@ function App() {
   const categoryEl = useRef();
   const categoryEl2 = useRef();
   const [total, setTotal] = useState(300);
-  const [idCounter, setIdCounter] = useState(2); // Initialize idCounter
+  const [idCounter, setIdCounter] = useState(2);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const table_data = [
     {
       id: 0,
@@ -35,8 +36,13 @@ function App() {
       category: category[1],
     },
   ];
+  const view_category = {
+    Groceries: [table_data[0]],
+    Vehicle: [table_data[1]],
+  };
 
   const [table, setTable] = useState(table_data);
+  //const [viewCategory, setViewCategory]=useState(view_category);
 
   function handleAddCategory() {
     setCategory((prevCategories) => [
@@ -50,7 +56,7 @@ function App() {
   function handleSubmit() {
     const amounts = parseFloat(amountEl.current.value);
     const newTableSet = {
-      id: idCounter + 1,
+      id: idCounter,
       date: {
         currentDate: now.toLocaleDateString(),
         currentTime: now.toLocaleTimeString(),
@@ -60,7 +66,7 @@ function App() {
       category: categoryEl2.current.value,
     };
     setTable((prevTable) => [...prevTable, newTableSet]);
-    setIdCounter((prevIdCounter) => prevIdCounter + 1); // Increment idCounter
+    setIdCounter((prevIdCounter) => prevIdCounter + 1);
     setTotal((prevAmount) => prevAmount + amounts);
     descriptionEl.current.value = "";
     amountEl.current.value = "";
@@ -70,9 +76,12 @@ function App() {
   function handleDelete(id) {
     const itemToDelete = table.find((item) => item.id === id);
     if (itemToDelete) {
-      setTotal((prevTotal) => prevTotal - itemToDelete.amount); // Update the total
+      setTotal((prevTotal) => prevTotal - itemToDelete.amount);
       setTable((prevTable) => prevTable.filter((item) => item.id !== id));
     }
+  }
+  function handleCategoryChange(event) {
+    setSelectedCategory(event.target.value);
   }
 
   return (
@@ -120,7 +129,7 @@ function App() {
             ))}
           </select>
         </div>
-        <div className="btn btn-primary" onClick={handleSubmit}>
+        <div className="btn btn-primary m-15" onClick={handleSubmit}>
           Submit
         </div>
         <AddCategory />
@@ -128,7 +137,11 @@ function App() {
         <div>
           <h2 style={{ margin: "1rem" }}>View Category</h2>
 
-          <select className="form-select" placeholder="Add Category">
+          <select
+            className="form-select"
+            placeholder="Add Category"
+            onChange={handleCategoryChange}
+          >
             <option>All</option>
             {category.map((cates, index) => (
               <option key={index}>{cates}</option>
@@ -145,26 +158,47 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {table.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    {item.date.currentDate}
-                    <br />
-                    {item.date.currentTime}
-                  </td>
-                  <td>{item.description}</td>
-                  <td>{item.amount}</td>
-                  <td>{item.category}</td>
-                  <td>
-                    <button
-                      className="btn btn-danger"
-                      onDoubleClick={() => handleDelete(item.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {selectedCategory != "All"
+                ? view_category[selectedCategory].map((category2) => (
+                    <tr key={category2.id}>
+                      <td>
+                        {category2.date.currentDate}
+                        <br />
+                        {category2.date.currentTime}
+                      </td>
+                      <td>{category2.description}</td>
+                      <td>{category2.amount}</td>
+                      <td>{category2.category}</td>
+                      <td>
+                        <button
+                          className="btn btn-danger"
+                          onDoubleClick={() => handleDelete(category2.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                : table.map((item) => (
+                    <tr key={item.id}>
+                      <td>
+                        {item.date.currentDate}
+                        <br />
+                        {item.date.currentTime}
+                      </td>
+                      <td>{item.description}</td>
+                      <td>{item.amount}</td>
+                      <td>{item.category}</td>
+                      <td>
+                        <button
+                          className="btn btn-danger"
+                          onDoubleClick={() => handleDelete(item.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
               <tr>
                 <td></td>
                 <td>
