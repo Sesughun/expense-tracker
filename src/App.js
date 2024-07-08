@@ -12,8 +12,10 @@ function App() {
   const categoryEl = useRef();
   const categoryEl2 = useRef();
   const [total, setTotal] = useState(300);
+  let id = 1;
   const table_data = [
     {
+      id: 0,
       date: {
         currentDate: now.toLocaleDateString(),
         currentTime: now.toLocaleTimeString(),
@@ -23,6 +25,7 @@ function App() {
       category: category[0],
     },
     {
+      id: 1,
       date: {
         currentDate: now.toLocaleDateString(),
         currentTime: now.toLocaleTimeString(),
@@ -47,6 +50,7 @@ function App() {
   function handleSubmit() {
     const amounts = parseFloat(amountEl.current.value);
     const newTableSet = {
+      id: id + 1,
       date: {
         currentDate: now.toLocaleDateString(),
         currentTime: now.toLocaleTimeString(),
@@ -61,7 +65,9 @@ function App() {
     categoryEl2.current.value = "";
     setTotal((prevAmount) => prevAmount + amounts);
   }
-  function handleDelete() {}
+  function handleDelete() {
+    setTable(table.filter((item) => item.id !== id));
+  }
 
   return (
     <div className="container">
@@ -133,8 +139,8 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {table.map((item, index) => (
-                <tr key={index}>
+              {table.map((item) => (
+                <tr key={item.id}>
                   <td>
                     {item.date.currentDate}
                     <br />
