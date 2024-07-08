@@ -12,7 +12,7 @@ function App() {
   const categoryEl = useRef();
   const categoryEl2 = useRef();
   const [total, setTotal] = useState(300);
-  let id = 1;
+  const [idCounter, setIdCounter] = useState(2); // Initialize idCounter
   const table_data = [
     {
       id: 0,
@@ -50,23 +50,29 @@ function App() {
   function handleSubmit() {
     const amounts = parseFloat(amountEl.current.value);
     const newTableSet = {
-      id: id + 1,
+      id: idCounter + 1,
       date: {
         currentDate: now.toLocaleDateString(),
         currentTime: now.toLocaleTimeString(),
       },
       description: descriptionEl.current.value,
-      amount: amountEl.current.value,
+      amount: amounts,
       category: categoryEl2.current.value,
     };
     setTable((prevTable) => [...prevTable, newTableSet]);
+    setIdCounter((prevIdCounter) => prevIdCounter + 1); // Increment idCounter
+    setTotal((prevAmount) => prevAmount + amounts);
     descriptionEl.current.value = "";
     amountEl.current.value = "";
     categoryEl2.current.value = "";
-    setTotal((prevAmount) => prevAmount + amounts);
   }
-  function handleDelete() {
-    setTable(table.filter((item) => item.id !== id));
+
+  function handleDelete(id) {
+    const itemToDelete = table.find((item) => item.id === id);
+    if (itemToDelete) {
+      setTotal((prevTotal) => prevTotal - itemToDelete.amount); // Update the total
+      setTable((prevTable) => prevTable.filter((item) => item.id !== id));
+    }
   }
 
   return (
@@ -76,7 +82,7 @@ function App() {
         value={{ category, setCategory, categoryEl, handleAddCategory }}
       >
         <div className="mb-3 mt-3">
-          <label for="description" className="form-label">
+          <label htmlFor="description" className="form-label">
             Description:
           </label>
           <input
@@ -89,7 +95,7 @@ function App() {
           />
         </div>
         <div className="mb-3">
-          <label for="amount" className="form-label">
+          <label htmlFor="amount" className="form-label">
             Amount (NGN):
           </label>
           <input
@@ -104,13 +110,13 @@ function App() {
           />
         </div>
         <div className="mb-3">
-          <label for="category" className="form-label">
+          <label htmlFor="category" className="form-label">
             Category:
           </label>
-          <select class="form-select" ref={categoryEl2}>
+          <select className="form-select" ref={categoryEl2}>
             <option>Add category</option>
-            {category.map((cates) => (
-              <option>{cates}</option>
+            {category.map((cates, index) => (
+              <option key={index}>{cates}</option>
             ))}
           </select>
         </div>
@@ -122,10 +128,10 @@ function App() {
         <div>
           <h2 style={{ margin: "1rem" }}>View Category</h2>
 
-          <select class="form-select" placeholder="Add Category">
+          <select className="form-select" placeholder="Add Category">
             <option>All</option>
-            {category.map((cates) => (
-              <option>{cates}</option>
+            {category.map((cates, index) => (
+              <option key={index}>{cates}</option>
             ))}
           </select>
           <table className="table table-bordered w-100" id="table-text">
@@ -150,7 +156,10 @@ function App() {
                   <td>{item.amount}</td>
                   <td>{item.category}</td>
                   <td>
-                    <button className="btn btn-danger" onClick={handleDelete}>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDelete(item.id)}
+                    >
                       Delete
                     </button>
                   </td>
