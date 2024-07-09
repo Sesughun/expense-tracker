@@ -42,7 +42,7 @@ function App() {
   };
 
   const [table, setTable] = useState(table_data);
-  //const [viewCategory, setViewCategory]=useState(view_category);
+  const [viewCategory, setViewCategory] = useState(view_category);
 
   function handleAddCategory() {
     setCategory((prevCategories) => [
@@ -73,11 +73,15 @@ function App() {
     categoryEl2.current.value = "";
   }
 
-  function handleDelete(id) {
+  function handleDelete(id, category) {
     const itemToDelete = table.find((item) => item.id === id);
     if (itemToDelete) {
       setTotal((prevTotal) => prevTotal - itemToDelete.amount);
       setTable((prevTable) => prevTable.filter((item) => item.id !== id));
+      setViewCategory((prevCategory) => ({
+        ...prevCategory,
+        [category]: prevCategory[category].filter((obj) => obj.id !== obj.id),
+      }));
     }
   }
   function handleCategoryChange(event) {
@@ -172,7 +176,9 @@ function App() {
                       <td>
                         <button
                           className="btn btn-danger"
-                          onDoubleClick={() => handleDelete(category2.id)}
+                          onDoubleClick={() =>
+                            handleDelete(category2.id, category2.category)
+                          }
                         >
                           Delete
                         </button>
