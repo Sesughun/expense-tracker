@@ -51,7 +51,7 @@ function App() {
     ]);
     categoryEl.current.value = "";
   }
-  useEffect(() => {}, [category]);
+  //useEffect(() => {}, [category]);
 
   function handleSubmit() {
     const amounts = parseFloat(amountEl.current.value);
