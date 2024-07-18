@@ -3,8 +3,16 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { useContext } from "react";
 import ExpenseContext from "./ExpenseContext";
 function AddCategory() {
-  const { category, setCategory, categoryEl, handleAddCategory } =
-    useContext(ExpenseContext);
+  const {
+    category,
+    setCategory,
+    categoryEl,
+    setCategoryEl,
+    handleAddCategory,
+  } = useContext(ExpenseContext);
+  const handleCategory = (e) => {
+    setCategoryEl(e.target.value);
+  };
 
   return (
     <>
@@ -27,7 +35,8 @@ function AddCategory() {
               className="form-control"
               id="setCategory"
               placeholder="Enter Category"
-              ref={categoryEl}
+              value={categoryEl}
+              onChange={handleCategory}
             />
           </div>
 

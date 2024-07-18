@@ -9,7 +9,7 @@ function App() {
   const [category, setCategory] = useState(["Groceries", "Vehicle"]);
   const descriptionEl = useRef();
   const amountEl = useRef();
-  const categoryEl = useRef();
+  const [categoryEl, setCategoryEl] = useState();
   const categoryEl2 = useRef();
   const [total, setTotal] = useState(300);
   const [idCounter, setIdCounter] = useState(2);
@@ -45,13 +45,10 @@ function App() {
   const [viewCategory, setViewCategory] = useState(view_category);
 
   function handleAddCategory() {
-    setCategory((prevCategories) => [
-      ...prevCategories,
-      categoryEl.current.value,
-    ]);
-    categoryEl.current.value = "";
+    setCategory((prevCategories) => [...prevCategories, categoryEl]);
+    //categoryEl.target.value = "";
+    setCategoryEl("");
   }
-  //useEffect(() => {}, [category]);
 
   function handleSubmit() {
     const amounts = parseFloat(amountEl.current.value);
@@ -65,8 +62,18 @@ function App() {
       amount: amounts,
       category: categoryEl2.current.value,
     };
+
     setTable((prevTable) => [...prevTable, newTableSet]);
+
     setIdCounter((prevIdCounter) => prevIdCounter + 1);
+
+    setViewCategory((prevViewCategory) => ({
+      ...prevViewCategory,
+      [newTableSet.category]: [
+        ...(prevViewCategory[newTableSet.category] || []),
+        newTableSet,
+      ],
+    }));
     setTotal((prevAmount) => prevAmount + amounts);
     descriptionEl.current.value = "";
     amountEl.current.value = "";
@@ -80,10 +87,11 @@ function App() {
       setTable((prevTable) => prevTable.filter((item) => item.id !== id));
       setViewCategory((prevCategory) => ({
         ...prevCategory,
-        [category]: prevCategory[category].filter((obj) => obj.id !== obj.id),
+        [category]: prevCategory[category].filter((obj) => obj.id !== id),
       }));
     }
   }
+
   function handleCategoryChange(event) {
     setSelectedCategory(event.target.value);
   }
@@ -92,7 +100,13 @@ function App() {
     <div className="container">
       <h1>Milan's Expense Tracker</h1>
       <ExpenseContext.Provider
-        value={{ category, setCategory, categoryEl, handleAddCategory }}
+        value={{
+          category,
+          setCategory,
+          categoryEl,
+          setCategoryEl,
+          handleAddCategory,
+        }}
       >
         <div className="mb-3 mt-3">
           <label htmlFor="description" className="form-label">
@@ -133,9 +147,9 @@ function App() {
             ))}
           </select>
         </div>
-        <div className="btn btn-primary m-15" onClick={handleSubmit}>
+        <button className="btn btn-primary" onClick={handleSubmit}>
           Submit
-        </div>
+        </button>
         <AddCategory />
 
         <div>
@@ -162,8 +176,8 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {selectedCategory != "All"
-                ? view_category[selectedCategory].map((category2) => (
+              {selectedCategory !== "All"
+                ? (viewCategory[selectedCategory] || []).map((category2) => (
                     <tr key={category2.id}>
                       <td>
                         {category2.date.currentDate}
@@ -198,7 +212,9 @@ function App() {
                       <td>
                         <button
                           className="btn btn-danger"
-                          onDoubleClick={() => handleDelete(item.id)}
+                          onDoubleClick={() =>
+                            handleDelete(item.id, item.category)
+                          }
                         >
                           Delete
                         </button>
